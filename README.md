@@ -1,5 +1,5 @@
-# Karat-Interview
-Here’s a complete, copy-paste friendly **guidebook** for Karat Interview preparation. It includes the *top Karat questions* plus high-frequency JavaScript coding and conceptual questions—with brief answers and sample code where applicable.
+# JavaScript Interview
+Here’s a complete, copy-paste friendly **guidebook** for JavaScript Interview preparation. It includes the *top JavaScript questions* plus high-frequency JavaScript coding and conceptual questions—with brief answers and sample code where applicable.
 
 ***
 
@@ -9,7 +9,7 @@ Here’s a complete, copy-paste friendly **guidebook** for Karat Interview prepa
 
 ***
 
-## **Karat/General Technical Interview Questions**
+## **JavaScript/General Technical Interview Questions**
 
 ### 1. Explain the difference between a linked list and an array.
 An array uses contiguous memory and allows fast random access (O(1)), but has fixed size. Linked lists are dynamically sized, each node points to the next, and accessing a particular index is O(n). Insertions/deletions are cheaper if you know the pointer.
@@ -393,4 +393,4 @@ p2.then(x => console.log('Should skip:', x))
 
 ***
 
-**Good luck with your Karat interview! Copy and use this as your prepping cheat-sheet.**
+**Good luck with your JavaScript interview! Copy and use this as your prepping cheat-sheet.**
