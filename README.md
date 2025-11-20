@@ -285,6 +285,92 @@ function mergeArrays(arr1, arr2) {
 }
 ```
 
+### curry function
+```javascript
+const add = a => {
+  return b => {
+    if (b) 
+      return add(a + b); // If b is present, call add recursively with accumulated sum
+    return a; // When called with empty (no b), return the accumulated sum a
+  };
+};
+
+add(2)(3)(4)(); // This chains calls with 2, 3, 4, then empty call to get sum
+```
+
+### custom promise
+```javascript
+class MyPromise {
+  static P = 'pending';
+  static F = 'fulfilled';
+  static R = 'rejected';
+
+  constructor(fn) {
+    this.s = MyPromise.P;
+    this.v = undefined;
+    this.e = undefined;
+    this.f = [];
+    this.r = [];
+
+    const ok = x => {
+      if (this.s !== MyPromise.P) return;
+      this.s = MyPromise.F;
+      this.v = x;
+      this.f.forEach(fn => fn(x));
+    };
+
+    const fail = x => {
+      if (this.s !== MyPromise.P) return;
+      this.s = MyPromise.R;
+      this.e = x;
+      this.r.forEach(fn => fn(x));
+    };
+
+    try {
+      fn(ok, fail);
+    } catch (x) {
+      fail(x);
+    }
+  }
+
+  then(f1, r1) {
+    return new MyPromise((ok, fail) => {
+      const done = x => {
+        try { ok(typeof f1 === 'function' ? f1(x) : x); }
+        catch (e) { fail(e); }
+      };
+      const error = x => {
+        try { if (typeof r1 === 'function') ok(r1(x)); else fail(x); }
+        catch (e) { fail(e); }
+      };
+      if (this.s === MyPromise.F)
+        setTimeout(() => done(this.v), 0);
+      else if (this.s === MyPromise.R)
+        setTimeout(() => error(this.e), 0);
+      else {
+        this.f.push(done);
+        this.r.push(error);
+      }
+    });
+  }
+
+  catch(r1) {
+    return this.then(null, r1);
+  }
+}
+
+// Success example
+const p1 = new MyPromise((ok, fail) => setTimeout(() => ok("yes"), 100));
+p1.then(x => { console.log('Resolved:', x); return 'next'; })
+  .then(x => { console.log(x); throw "fail!"; })
+  .catch(e => console.log('Caught:', e));
+
+// Error example
+const p2 = new MyPromise((ok, fail) => setTimeout(() => fail("no"), 100));
+p2.then(x => console.log('Should skip:', x))
+  .catch(e => console.log('Caught error:', e));
+```
+
 ***
 
 ## **Popular JS Concepts (Short Answers)**
