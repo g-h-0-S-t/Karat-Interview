@@ -6,12 +6,25 @@ const html = document.documentElement;
 const currentTheme = localStorage.getItem('theme') || 'dark';
 html.setAttribute('data-theme', currentTheme);
 
+// Update highlight.js theme based on current theme
+function updateHighlightTheme(theme) {
+    const link = document.querySelector('link[href*="highlight.js"]');
+    if (link) {
+        link.href = theme === 'dark' 
+            ? 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css'
+            : 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css';
+    }
+}
+
+updateHighlightTheme(currentTheme);
+
 themeToggle.addEventListener('click', () => {
     const theme = html.getAttribute('data-theme');
     const newTheme = theme === 'dark' ? 'light' : 'dark';
     
     html.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
+    updateHighlightTheme(newTheme);
     
     // Add animation effect
     themeToggle.style.transform = 'rotate(360deg)';
@@ -20,40 +33,56 @@ themeToggle.addEventListener('click', () => {
     }, 300);
 });
 
-// Smooth scroll for anchor links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
+// Fetch and render README.md
+async function loadReadme() {
+    try {
+        const response = await fetch('https://raw.githubusercontent.com/g-h-0-S-t/JavaScript-Interview/main/README.md');
+        const markdown = await response.text();
+        
+        // Configure marked options
+        marked.setOptions({
+            breaks: true,
+            gfm: true,
+            headerIds: true,
+            mangle: false
+        });
+        
+        // Parse markdown to HTML
+        const html = marked.parse(markdown);
+        document.getElementById('content').innerHTML = html;
+        
+        // Apply syntax highlighting
+        document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightElement(block);
+            addCopyButton(block.parentElement);
+        });
+        
+        // Add smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
             });
-        }
-    });
-});
+        });
+        
+    } catch (error) {
+        console.error('Error loading README:', error);
+        document.getElementById('content').innerHTML = '<p>Error loading content. Please try again later.</p>';
+    }
+}
 
 // Add copy button to code blocks
-document.querySelectorAll('pre code').forEach((codeBlock) => {
-    const pre = codeBlock.parentElement;
+function addCopyButton(pre) {
     const button = document.createElement('button');
     button.className = 'copy-button';
     button.textContent = 'Copy';
-    button.style.cssText = `
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        padding: 4px 8px;
-        font-size: 0.75rem;
-        background: var(--bg-tertiary);
-        color: var(--text-primary);
-        border: 1px solid var(--border-color);
-        border-radius: 4px;
-        cursor: pointer;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    `;
+    button.setAttribute('aria-label', 'Copy code to clipboard');
     
     pre.style.position = 'relative';
     pre.appendChild(button);
@@ -67,42 +96,26 @@ document.querySelectorAll('pre code').forEach((codeBlock) => {
     });
     
     button.addEventListener('click', async () => {
+        const code = pre.querySelector('code');
         try {
-            await navigator.clipboard.writeText(codeBlock.textContent);
+            await navigator.clipboard.writeText(code.textContent);
             button.textContent = 'Copied!';
             button.style.background = 'var(--accent-color)';
+            button.style.color = 'var(--bg-primary)';
             setTimeout(() => {
                 button.textContent = 'Copy';
                 button.style.background = 'var(--bg-tertiary)';
+                button.style.color = 'var(--text-primary)';
             }, 2000);
         } catch (err) {
             console.error('Failed to copy:', err);
+            button.textContent = 'Failed';
+            setTimeout(() => {
+                button.textContent = 'Copy';
+            }, 2000);
         }
     });
-});
-
-// Add animation on scroll
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, observerOptions);
-
-// Observe all question cards and concept cards
-document.querySelectorAll('.question-card, .concept-card').forEach(card => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(20px)';
-    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-    observer.observe(card);
-});
+}
 
 // Add keyboard shortcut for theme toggle (Ctrl+Shift+L)
 document.addEventListener('keydown', (e) => {
@@ -111,6 +124,9 @@ document.addEventListener('keydown', (e) => {
         themeToggle.click();
     }
 });
+
+// Load README on page load
+loadReadme();
 
 console.log('%cJavaScript Interview Guide', 'font-size: 20px; font-weight: bold; color: #58a6ff;');
 console.log('%cTheme shortcut: Ctrl+Shift+L', 'font-size: 12px; color: #8b949e;');

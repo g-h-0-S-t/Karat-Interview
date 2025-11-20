@@ -9,8 +9,6 @@
     --border-color: #30363d;
     --accent-color: #58a6ff;
     --code-bg: #161b22;
-    --card-bg: #0d1117;
-    --card-border: #30363d;
     --shadow: rgba(0, 0, 0, 0.3);
 }
 
@@ -25,8 +23,6 @@
     --border-color: #d0d7de;
     --accent-color: #0969da;
     --code-bg: #f6f8fa;
-    --card-bg: #ffffff;
-    --card-border: #d0d7de;
     --shadow: rgba(0, 0, 0, 0.1);
 }
 
@@ -107,168 +103,154 @@ body {
     display: block;
 }
 
-/* Hero Section */
-.hero {
-    text-align: center;
-    padding: 4rem 0;
-    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
-    border-radius: 12px;
-    margin: 2rem 0;
-    border: 1px solid var(--border-color);
+/* Markdown Body Styles */
+.markdown-body {
+    padding: 2rem 0;
 }
 
-.hero h1 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    background: linear-gradient(135deg, var(--accent-color), var(--text-link-hover));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.subtitle {
-    font-size: 1.25rem;
-    color: var(--text-secondary);
-}
-
-/* Sections */
-.section {
-    margin: 3rem 0;
-}
-
-.section h2 {
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
+.markdown-body h1 {
+    font-size: 2.5rem;
+    margin: 2rem 0 1rem 0;
     color: var(--text-primary);
     border-bottom: 2px solid var(--accent-color);
     padding-bottom: 0.5rem;
 }
 
-/* Question Cards */
-.question-card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px var(--shadow);
-}
-
-.question-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px var(--shadow);
-    border-color: var(--accent-color);
-}
-
-.question-card h3 {
-    color: var(--accent-color);
-    margin-bottom: 1rem;
-    font-size: 1.25rem;
-}
-
-.question-card h4 {
-    color: var(--text-link);
-    margin-bottom: 0.75rem;
-    font-size: 1.1rem;
-}
-
-.question-card p {
-    color: var(--text-secondary);
-    margin-bottom: 1rem;
-}
-
-.question-card ul {
-    margin-left: 1.5rem;
-    color: var(--text-secondary);
-}
-
-.question-card li {
-    margin-bottom: 0.5rem;
-}
-
-/* Code Blocks */
-pre {
-    background: var(--code-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 1rem;
-    overflow-x: auto;
-    margin: 1rem 0;
-}
-
-code {
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 0.9rem;
+.markdown-body h2 {
+    font-size: 2rem;
+    margin: 2rem 0 1rem 0;
     color: var(--text-primary);
-    line-height: 1.5;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
 }
 
-/* Concept Grid */
-.concept-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-    margin-top: 2rem;
-}
-
-.concept-card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
-    padding: 1.5rem;
-    transition: all 0.3s ease;
-}
-
-.concept-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px var(--shadow);
-    border-color: var(--accent-color);
-}
-
-.concept-card h4 {
+.markdown-body h3 {
+    font-size: 1.5rem;
+    margin: 1.5rem 0 0.75rem 0;
     color: var(--accent-color);
-    margin-bottom: 0.75rem;
-    font-size: 1.1rem;
 }
 
-.concept-card p {
-    color: var(--text-secondary);
-    font-size: 0.95rem;
+.markdown-body h4 {
+    font-size: 1.25rem;
+    margin: 1rem 0 0.5rem 0;
+    color: var(--text-link);
 }
 
-/* Lists */
-ul {
-    margin-left: 1.5rem;
-    margin-bottom: 1rem;
-}
-
-li {
-    margin-bottom: 0.5rem;
+.markdown-body p {
+    margin: 1rem 0;
     color: var(--text-secondary);
 }
 
-/* Links */
-a {
+.markdown-body strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+    margin: 1rem 0 1rem 1.5rem;
+    color: var(--text-secondary);
+}
+
+.markdown-body li {
+    margin: 0.5rem 0;
+}
+
+.markdown-body a {
     color: var(--text-link);
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
-a:hover {
+.markdown-body a:hover {
     color: var(--text-link-hover);
     text-decoration: underline;
 }
 
-/* Highlight */
-.highlight {
-    background: var(--bg-tertiary);
-    border-left: 4px solid var(--accent-color);
+.markdown-body hr {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 2rem 0;
+}
+
+/* Code Blocks */
+.markdown-body pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
     padding: 1rem;
-    border-radius: 4px;
-    margin: 1rem 0;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    position: relative;
+}
+
+.markdown-body code {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.markdown-body p code,
+.markdown-body li code {
+    background: var(--code-bg);
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-size: 0.85rem;
     color: var(--text-primary);
-    font-weight: 500;
+}
+
+/* Copy Button */
+.copy-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease, background 0.3s ease;
+    z-index: 10;
+}
+
+.copy-button:hover {
+    background: var(--border-color);
+}
+
+/* Blockquotes */
+.markdown-body blockquote {
+    border-left: 4px solid var(--accent-color);
+    padding: 0.5rem 1rem;
+    margin: 1rem 0;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+/* Tables */
+.markdown-body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+}
+
+.markdown-body th,
+.markdown-body td {
+    border: 1px solid var(--border-color);
+    padding: 0.75rem;
+    text-align: left;
+}
+
+.markdown-body th {
+    background: var(--bg-tertiary);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.markdown-body td {
+    color: var(--text-secondary);
 }
 
 /* Footer */
@@ -285,26 +267,37 @@ a:hover {
     margin-bottom: 0.5rem;
 }
 
+.footer a {
+    color: var(--text-link);
+    text-decoration: none;
+}
+
+.footer a:hover {
+    color: var(--text-link-hover);
+    text-decoration: underline;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
-    .hero h1 {
+    .markdown-body h1 {
         font-size: 2rem;
     }
     
-    .subtitle {
-        font-size: 1rem;
-    }
-    
-    .section h2 {
+    .markdown-body h2 {
         font-size: 1.5rem;
     }
     
-    .concept-grid {
-        grid-template-columns: 1fr;
+    .markdown-body h3 {
+        font-size: 1.25rem;
     }
     
-    pre {
+    .markdown-body pre {
         font-size: 0.85rem;
+        padding: 0.75rem;
+    }
+    
+    .copy-button {
+        opacity: 1;
     }
 }
 
