@@ -67,9 +67,9 @@ async function loadReadme() {
     // Render Mermaid diagrams asynchronously after DOM update
     if (window.mermaid) {
         // Wait for next event loop tick to ensure DOM is fully updated
-        setTimeout(async () => {
-            await mermaid.run();
-        }, 100);
+        await mermaid.run({
+            querySelector: '.mermaid'
+        });
     }
     document.querySelectorAll('pre code').forEach((block) => {
         // Skip mermaid diagrams - they should be rendered by mermaid.js, not highlighted
