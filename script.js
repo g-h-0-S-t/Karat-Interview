@@ -33,6 +33,17 @@ themeToggle.addEventListener('click', () => {
     }, 300);
 });
 
+// Configure marked.js custom renderer for Mermaid diagrams (global scope)
+marked.use({
+        renderer: {
+                    code(code, infostring) {
+                                    if ((infostring || '').trim() === 'mermaid') {
+                                                        return `<div class="mermaid">${code}</div>`;
+                                                    }
+                                }
+                }
+            });
+
 // Fetch and render README.md
 async function loadReadme() {
     try {
@@ -47,16 +58,6 @@ async function loadReadme() {
             mangle: false
         });
 
-                // Custom renderer for Mermaid diagrams
-                marked.use({
-                                renderer: {
-                                                    code(code, infostring) {
-                                                                        console.log('code() renderer called with infostring:', infostring);
-                                                                            if ((infostring || '').trim() === 'mermaid') {
-                                                                                                console.log('Mermaid block detected!', infostring);
-                                                                                                        return `<div class="mermaid">${code}</div>`;
-                                                                                                    }
-                                                                        }
                                                 }
                                             });
         
