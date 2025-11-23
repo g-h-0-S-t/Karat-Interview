@@ -252,7 +252,7 @@ B
 3. **Event Loop picks from Macrotask Queue:**
    - Runs callback `B` → prints **B**
 
-### Visual Diagram
+### Mermaid Diagram
 
 ```mermaid
 ---
@@ -266,16 +266,27 @@ graph TB
     EventLoop["Event Loop"]
     MicroQueue["Microtask Queue<br/>[C] FIFO"]
     MacroQueue["Macrotask Queue<br/>[B] FIFO"]
+
+    ProcessBlock1["Runs sync code"]
+    ProcessBlock2["1. Checks Microtasks<br/>(High Priority)"]
+    ProcessBlock3["2. Checks Macrotasks<br/>(Lower Priority)"]
+    ProcessBlock4["• Promise.then<br/>• queueMicrotask<br/>• MutationObserver"]
+    ProcessBlock5["• setTimeout<br/>• setInterval<br/>• DOM events<br/>I/O"]
     
-    CallStack -->|"Runs sync code"| EventLoop
-    EventLoop -->|"1. Checks Microtasks<br/>(High Priority)"| MicroQueue
-    EventLoop -->|"2. Checks Macrotasks<br/>(Lower Priority)"| MacroQueue
+    CallStack --> ProcessBlock1 --> EventLoop
+    EventLoop --> ProcessBlock2 --> MicroQueue
+    EventLoop --> ProcessBlock3 --> MacroQueue
     
-    MicroQueue -.->|"Promise.then<br/>queueMicrotask<br/>MutationObserver"| CallStack
-    MacroQueue -.->|"setTimeout<br/>setInterval<br/>DOM events<br/>I/O"| CallStack
+    MicroQueue -.-> ProcessBlock4 -.-> CallStack
+    MacroQueue -.-> ProcessBlock5 -.-> CallStack
     
     style CallStack fill:#0366d6,stroke:#0366d6,stroke-width:2px
     style MicroQueue fill:#d68400,stroke:#d68400,stroke-width:2px
     style MacroQueue fill:#d6006e,stroke:#d6006e,stroke-width:2px
     style EventLoop fill:green,stroke:green,stroke-width:2px
+    style ProcessBlock1 fill:light-blue,stroke:light-blue,stroke-width:2px
+    style ProcessBlock2 fill:light-blue,stroke:light-blue,stroke-width:2px
+    style ProcessBlock3 fill:light-blue,stroke:light-blue,stroke-width:2px
+    style ProcessBlock4 fill:light-blue,stroke:light-blue,stroke-width:2px
+    style ProcessBlock5 fill:light-blue,stroke:light-blue,stroke-width:2px
 ```
