@@ -1,107 +1,268 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-<meta charset="utf-8" />
+<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>JavaScript Interview Questions</title>
 
-<!-- GitHub Dark Theme -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown-dark.min.css"/>
+<!-- GitHub Markdown CSS (Light & Dark) -->
+<link id="theme-css" rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown-dark.min.css">
 
 <!-- Highlight.js -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<link id="hljs-css" rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-
-<!-- Mermaid -->
-<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 
 <!-- Marked.js -->
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-<style>
-  body {
-    margin: 0;
-    background: #0d1117;
-    color: #c9d1d9;
-    font-family: system-ui;
-  }
-  .container {
-    max-width: 980px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  pre code {
-    white-space: pre-wrap !important;
-    word-wrap: break-word !important;
-  }
-</style>
+<!-- Mermaid -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 
+<style>
+:root {
+  --bg-dark: #0d1117;
+  --bg-light: #ffffff;
+  --text-dark: #c9d1d9;
+  --text-light: #24292f;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-dark);
+  color: var(--text-dark);
+  font-family: system-ui, sans-serif;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+[data-theme="light"] body {
+  background: var(--bg-light);
+  color: var(--text-light);
+}
+
+/* Sticky Header */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(10px);
+  background: rgba(13,17,23,0.8);
+  border-bottom: 1px solid #30363d;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+[data-theme="light"] .header {
+  background: rgba(255,255,255,0.8);
+  border-color: #d0d7de;
+}
+
+.header input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #30363d;
+  background: #161b22;
+  color: #c9d1d9;
+}
+
+[data-theme="light"] .header input {
+  background: #f6f8fa;
+  color: #24292f;
+  border-color: #d0d7de;
+}
+
+.header button {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background: #238636;
+  color: white;
+  font-weight: 500;
+}
+
+#theme-toggle {
+  background: #6e7681;
+}
+
+.container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+pre {
+  position: relative;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 4px 8px;
+  font-size: 12px;
+  background: #30363d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
+}
+
+pre:hover .copy-btn {
+  opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .header {
+    flex-wrap: wrap;
+  }
+}
+</style>
 </head>
+
 <body>
+
+<div class="header">
+  <input id="search" type="text" placeholder="Search anything..." />
+  <button id="theme-toggle">Theme</button>
+</div>
 
 <div class="container markdown-body" id="content">
   <h2>Loading…</h2>
 </div>
 
 <script>
-/* ---------- MERMAID INIT ---------- */
-mermaid.initialize({ startOnLoad: false });
+/* ---------- THEME TOGGLE ---------- */
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
 
-/* ---------- SAFE CODE HIGHLIGHTER ---------- */
-function safeHighlight(code, lang) {
-  try {
-    if (lang && hljs.getLanguage(lang)) {
-      return hljs.highlight(code, { language: lang }).value;
-    }
-    return hljs.highlightAuto(code).value;
-  } catch (e) {
-    console.warn("Highlight fail:", e);
-    return code.replace(/[&<>]/g, m => (
-      { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]
-    ));
+  const themeCSS = document.getElementById("theme-css");
+  const hljsCSS = document.getElementById("hljs-css");
+
+  if (theme === "light") {
+    themeCSS.href =
+      "https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown-light.min.css";
+    hljsCSS.href =
+      "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css";
+  } else {
+    themeCSS.href =
+      "https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown-dark.min.css";
+    hljsCSS.href =
+      "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css";
   }
 }
 
+const savedTheme = localStorage.getItem("theme") || "dark";
+applyTheme(savedTheme);
+
+document.getElementById("theme-toggle").onclick = () => {
+  const newTheme =
+    document.documentElement.getAttribute("data-theme") === "dark"
+      ? "light"
+      : "dark";
+  localStorage.setItem("theme", newTheme);
+  applyTheme(newTheme);
+};
+
+/* ---------- MERMAID ---------- */
+mermaid.initialize({ startOnLoad: false });
+
 /* ---------- MARKED CONFIG ---------- */
 marked.setOptions({
-  highlight: (code, lang) => safeHighlight(String(code || "")),
-  breaks: true,
-  gfm: true
+  highlight: (code, lang) => {
+    try {
+      return lang && hljs.getLanguage(lang)
+        ? hljs.highlight(code, { language: lang }).value
+        : hljs.highlightAuto(code).value;
+    } catch {
+      return code;
+    }
+  },
+  gfm: true,
 });
 
-/* ---------- LOAD README FROM REPO ---------- */
+/* ---------- LOAD README ---------- */
+let fullText = "";
+
 async function loadReadme() {
-  const url = "https://raw.githubusercontent.com/g-h-0-S-t/JavaScript-Interview/main/README.md";
+  const url =
+    "https://raw.githubusercontent.com/g-h-0-S-t/JavaScript-Interview/main/README.md";
   const container = document.getElementById("content");
 
   try {
     const res = await fetch(url);
-    if (!res.ok) throw new Error("Failed to load README");
-
     const md = await res.text();
-    const html = marked.parse(md);
+    fullText = md;
 
+    const html = marked.parse(md);
     container.innerHTML = html;
 
-    /* Render Mermaid blocks */
-    const mermaidBlocks = container.querySelectorAll("code.language-mermaid");
-    mermaidBlocks.forEach((block, index) => {
-      const wrapper = document.createElement("div");
-      wrapper.className = "mermaid";
-      wrapper.textContent = block.textContent;
-
-      block.parentNode.replaceWith(wrapper);
+    /* Mermaid rendering */
+    container.querySelectorAll("code.language-mermaid").forEach((block) => {
+      const div = document.createElement("div");
+      div.className = "mermaid";
+      div.textContent = block.textContent;
+      block.parentNode.replaceWith(div);
     });
 
     mermaid.init();
 
-  } catch (err) {
-    console.error(err);
-    container.innerHTML = "<h2>Error loading README.md</h2>";
+    /* Copy buttons */
+    addCopyButtons();
+  } catch (e) {
+    container.innerHTML = "<h3>Error loading README.md</h3>";
   }
 }
 
 loadReadme();
+
+/* ---------- SEARCH ---------- */
+document.getElementById("search").addEventListener("input", (e) => {
+  const q = e.target.value.toLowerCase();
+  const content = document.getElementById("content");
+
+  if (!q.trim()) {
+    content.innerHTML = marked.parse(fullText);
+    addCopyButtons();
+    mermaid.init();
+    return;
+  }
+
+  const filtered = fullText
+    .split("\n\n")
+    .filter((block) => block.toLowerCase().includes(q))
+    .join("\n\n");
+
+  content.innerHTML = marked.parse(filtered || "No results found.");
+  addCopyButtons();
+  mermaid.init();
+});
+
+/* ---------- COPY BUTTONS ---------- */
+function addCopyButtons() {
+  document.querySelectorAll("pre").forEach((pre) => {
+    const code = pre.querySelector("code");
+    if (!code) return;
+
+    const btn = document.createElement("button");
+    btn.className = "copy-btn";
+    btn.textContent = "Copy";
+    btn.onclick = () => {
+      navigator.clipboard.writeText(code.innerText);
+      btn.textContent = "Copied!";
+      setTimeout(() => (btn.textContent = "Copy"), 1000);
+    };
+
+    pre.appendChild(btn);
+  });
+}
 </script>
 
 </body>
