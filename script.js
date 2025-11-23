@@ -51,7 +51,9 @@ async function loadReadme() {
                 marked.use({
                                 renderer: {
                                                     code(code, infostring) {
+                                                                        console.log('code() renderer called with infostring:', infostring);
                                                                             if ((infostring || '').trim() === 'mermaid') {
+                                                                                                console.log('Mermaid block detected!', infostring);
                                                                                                         return `<div class="mermaid">${code}</div>`;
                                                                                                     }
                                                                             // Return false for default rendering
