@@ -37,10 +37,12 @@ themeToggle.addEventListener('click', () => {
 marked.use({
         renderer: {
                     code(code, infostring) {
+                                        console.log('Mermaid renderer - infostring:', infostring, 'trimmed:', (infostring || '').trim());
                                     if ((infostring || '').trim() === 'mermaid') {
                                                         return `<div class="mermaid">${code}</div>`;
                                                     }
                                 }
+                            return false; // Use default renderer for non-mermaid blocks
                 }
             });
 
