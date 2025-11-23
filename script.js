@@ -120,10 +120,11 @@ function clearHighlights(el) {
 // Highlight search term in element
 function highlightTerm(el, term) {
   if (!term) return;
-  const regex = new RegExp(`(${term})`, 'gi');
+  // Escape special regex characters
+  const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(`(${escapedTerm})`, 'gi');
   const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
-  const nodesToReplace = [];
-  
+  const nodesToReplace = [];  
   while (walker.nextNode()) {
     const node = walker.currentNode;
     if (node.parentElement.tagName !== 'MARK' && node.nodeValue.match(regex)) {
