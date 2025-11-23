@@ -36,22 +36,27 @@ themeToggle.addEventListener('click', () => {
 // Configure marked.js custom renderer for Mermaid diagrams (global scope)
 marked.use({
     renderer: {
-        code(token) {
-            console.log('Mermaid renderer - token.lang:', token.lang, 'trimmed:', (token.lang || '').trim());
-            if ((token.lang || '').trim() === 'mermaid') {
-                return `<div class="mermaid">${token.text}</div>`;
+        code(code, infostring) {
+            const lang = (infostring || '').trim().toLowerCase();
+            if (lang === 'mermaid') {
+                return `<div class="mermaid">${code}</div>`;
             }
-            return false; // Use default renderer for non-mermaid blocks
+            return `<pre><code class="language-${lang}">${code}</code></pre>`;
         }
     }
 });
 
 // Fetch and render README.md
 async function loadReadme() {
-    const response = await fetch('https://raw.githubusercontent.com/g-h-0-S-t/JavaScript-Interview/main/README.md');
-    const markdown = await response.text();
+    const cacheKey = 'readme-cache-v1';
+    let markdown = localStorage.getItem(cacheKey);
 
-    // Configure marked options
+    if (!markdown) {
+        const response = await fetch('https://raw.githubusercontent.com/g-h-0-S-t/JavaScript-Interview/main/README.md');
+        markdown = await response.text();
+        localStorage.setItem(cacheKey, markdown);
+    }
+
     marked.setOptions({
         breaks: true,
         gfm: true,
@@ -59,89 +64,31 @@ async function loadReadme() {
         mangle: false
     });
 
+    // Parse Markdown → HTML
+    const htmlOutput = marked.parse(markdown);
+    const content = document.getElementById('content');
+    content.innerHTML = htmlOutput;
 
-    // Parse markdown to HTML
-    const html = marked.parse(markdown);
-    document.getElementById('content').innerHTML = html;
-
-    // Render Mermaid diagrams asynchronously after DOM update
-    if (window.mermaid) {
-        // Wait for next event loop tick to ensure DOM is fully updated
-        await mermaid.run({ querySelector: '.mermaid' });
-    }
-    document.querySelectorAll('pre code').forEach((block) => {
-        // Skip mermaid diagrams - they should be rendered by mermaid.js, not highlighted
-        if (block.classList.contains('language-mermaid')) return;
-
-        hljs.highlightElement(block);
-        addCopyButton(block.parentElement);
-    });
-
-    // Add smooth scroll for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
-    });
-
-
-    // Add copy button to code blocks
-    function addCopyButton(pre) {
-        const button = document.createElement('button');
-        button.className = 'copy-button';
-        button.textContent = 'Copy';
-        button.setAttribute('aria-label', 'Copy code to clipboard');
-
-        pre.style.position = 'relative';
-        pre.appendChild(button);
-
-        pre.addEventListener('mouseenter', () => {
-            button.style.opacity = '1';
-        });
-
-        pre.addEventListener('mouseleave', () => {
-            button.style.opacity = '0';
-        });
-
-        button.addEventListener('click', async () => {
-            const code = pre.querySelector('code');
-            try {
-                await navigator.clipboard.writeText(code.textContent);
-                button.textContent = 'Copied!';
-                button.style.background = 'var(--accent-color)';
-                button.style.color = 'var(--bg-primary)';
-                setTimeout(() => {
-                    button.textContent = 'Copy';
-                    button.style.background = 'var(--bg-tertiary)';
-                    button.style.color = 'var(--text-primary)';
-                }, 2000);
-            } catch (err) {
-                console.error('Failed to copy:', err);
-                button.textContent = 'Failed';
-                setTimeout(() => {
-                    button.textContent = 'Copy';
-                }, 2000);
-            }
-        });
-    }
-
-    // Add keyboard shortcut for theme toggle (Ctrl+Shift+L)
-    document.addEventListener('keydown', (e) => {
-        if (e.ctrlKey && e.shiftKey && e.key === 'L') {
-            e.preventDefault();
-            themeToggle.click();
+    // Render Mermaid after DOM update
+    requestAnimationFrame(() => {
+        if (window.mermaid) {
+            window.mermaid.run({ querySelector: '.mermaid' });
         }
-    });
 
-    // Load README on page load
+        // Deferred highlighting (fast!)
+        queueMicrotask(() => {
+            document.querySelectorAll('pre code').forEach((block) => {
+                if (block.classList.contains('language-mermaid')) return;
+                if (!block.dataset.highlighted) {
+                    hljs.highlightElement(block);
+                    block.dataset.highlighted = 'true';
+                }
+                addCopyButton(block.parentElement);
+            });
+        });
+    });
 }
+
 loadReadme();
 
 console.log('%cJavaScript Interview Guide', 'font-size: 20px; font-weight: bold; color: #58a6ff;');
