@@ -39,8 +39,7 @@ marked.use({
                     code(token) {
                                         console.log('Mermaid renderer - token.lang:', token.lang, 'trimmed:', (token.lang || '').trim());
                                     if ((token.lang || '').trim() === 'mermaid') {
-                                                        return `<div class="mermaid">${token.text}</div>`;
-                                                    }
+                            return `<pre class="mermaid">${token.text}</pre>`;                                                    }
                                         return false; // Use default renderer for non-mermaid blocks
                                 }
                 }
@@ -64,11 +63,13 @@ async function loadReadme() {
         const html = marked.parse(markdown);
         document.getElementById('content').innerHTML = html;
 
-                // Initialize Mermaid to render diagrams
-                if (window.mermaid) {
-            mermaid.run({querySelector: '.mermaid'});
-                            }
-        // Apply syntax highlighting
+        // Render Mermaid diagrams asynchronously after DOM update
+        if (window.mermaid) {
+            // Wait for next event loop tick to ensure DOM is fully updated
+            setTimeout(async () => {
+                await mermaid.run({querySelector: '.mermaid'});
+            }, 0);
+        }
         document.querySelectorAll('pre code').forEach((block) => {
                         // Skip mermaid diagrams - they should be rendered by mermaid.js, not highlighted
                         if (block.classList.contains('language-mermaid') || block.parentElement.classList.contains('mermaid')) {
