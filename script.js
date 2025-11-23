@@ -103,6 +103,7 @@ function enhanceMermaid() {
          mermaid.initialize({ startOnLoad: false, theme: "base" });
     mermaid.run();
 }
+   }
 
 /* =========================================================
    SEARCH + HIGHLIGHT
