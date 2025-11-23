@@ -48,7 +48,6 @@ marked.use({
 
 // Fetch and render README.md
 async function loadReadme() {
-    try {
         const response = await fetch('https://raw.githubusercontent.com/g-h-0-S-t/JavaScript-Interview/main/README.md');
         const markdown = await response.text();
         
@@ -60,7 +59,6 @@ async function loadReadme() {
             mangle: false
         });
 
-                                                }
                                             });
         
         // Parse markdown to HTML
