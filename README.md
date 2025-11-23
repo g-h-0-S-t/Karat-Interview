@@ -202,80 +202,83 @@ In distributed systems, can only guarantee 2 out of 3: Consistency, Availability
 
 JavaScript uses **one call stack** plus **multiple queues** to handle synchronous and asynchronous code execution.
 
-**The three key components:**
+### Call Stack (Synchronous execution)
 
-1. **Call Stack (Synchronous execution)**
-2.    - All normal code runs here in LIFO (Last In, First Out) order
-      -    - Stack must be empty before any async callbacks run
-       
-           - 2. **Microtask Queue** (High priority)
-             3.    - Contains: `Promise.then/catch/finally`, `queueMicrotask`, `MutationObserver`
-                   -    - Processed completely after each synchronous task
-                        -    - FIFO (First In, First Out)
-                         
-                             - 3. **Macrotask Queue** (Lower priority)
-                               4.    - Contains: `setTimeout`, `setInterval`, DOM events, I/O
-                                     -    - Processed one at a time, after all microtasks are done
-                                          -    - FIFO (First In, First Out)
-                                           
-                                               - ### Execution Order Example
-                                           
-                                               - ```javascript
-                                                 console.log('A');
-                                                 setTimeout(() => console.log('B'), 0);
-                                                 Promise.resolve().then(() => console.log('C'));
-                                                 console.log('D');
-                                                 ```
+- All normal code runs here in LIFO (Last In, First Out) order
+- Stack must be empty before any async callbacks run
 
-                                                 **Output:**
-                                                 ```
-                                                 A
-                                                 D
-                                                 C
-                                                 B
-                                                 ```
+### Microtask Queue (High priority)
 
-                                                 **Why this order?**
+- Contains: `Promise.then/catch/finally`, `queueMicrotask`, `MutationObserver`
+- Processed completely after each synchronous task
+- FIFO (First In, First Out)
 
-                                                 1. **Synchronous phase (Call Stack):**
-                                                 2.    - `console.log('A')` executes → prints **A**
-                                                       -    - `setTimeout` schedules callback `B` in **Macrotask Queue**
-                                                            -    - `Promise.then` schedules callback `C` in **Microtask Queue**
-                                                                 -    - `console.log('D')` executes → prints **D**
-                                                                  
-                                                                      - 2. **Call stack is now empty, Event Loop checks queues:**
-                                                                        3.    - **Microtask Queue** has priority → runs `C` → prints **C**
-                                                                              -    - Microtask Queue is empty
-                                                                               
-                                                                                   - 3. **Event Loop picks from Macrotask Queue:**
-                                                                                     4.    - Runs callback `B` → prints **B**
-                                                                                       
-                                                                                           - ### Visual Diagram
-                                                                                       
-                                                                                           - ```
-                                                                                                      ┌─────────────┐
-                                                                                                      │ Call Stack  │  ⇌ Runs sync, then async callbacks
-                                                                                                      └────▲────────┘
-                                                                                                           │
-                                                                                                      Event Loop
-                                                                                                           │
-                                                                                              ┌────────────┴─────────────┐
-                                                                                              │                         │
-                                                                                              │   Microtask Queue       │    (Promise.then, queueMicrotask)
-                                                                                              │   [C] FIFO              │
-                                                                                              │   Macrotask Queue       │    (setTimeout, events)
-                                                                                              │   [B] FIFO              │
-                                                                                              └─────────────────────────┘
-                                                                                             ```
+### Macrotask Queue (Lower priority)
 
-                                                                                             ### Key Rules
+- Contains: `setTimeout`, `setInterval`, DOM events, I/O
+- Processed one at a time, after all microtasks are done
+- FIFO (First In, First Out)
 
-                                                                                             - **Synchronous code always runs first** (call stack must empty completely)
-                                                                                             - - **Microtasks have priority** over macrotasks
-                                                                                               - - After **each macrotask**, all pending **microtasks** are drained before the next macrotask
-                                                                                                 - - Microtasks can enqueue more microtasks (which will also run before any macrotask)
-                                                                                                  
-                                                                                                   - ***
+### Execution Order Example
+
+```javascript
+console.log('A');
+setTimeout(() => console.log('B'), 0);
+Promise.resolve().then(() => console.log('C'));
+console.log('D');
+```
+
+**Output:**
+
+```
+A
+D
+C
+B
+```
+
+### Why this order?
+
+1. **Synchronous phase (Call Stack):**
+   - `console.log('A')` executes → prints **A**
+   - `setTimeout` schedules callback `B` in **Macrotask Queue**
+   - `Promise.then` schedules callback `C` in **Microtask Queue**
+   - `console.log('D')` executes → prints **D**
+
+2. **Call stack is now empty, Event Loop checks queues:**
+   - **Microtask Queue** has priority → runs `C` → prints **C**
+   - Microtask Queue is empty
+
+3. **Event Loop picks from Macrotask Queue:**
+   - Runs callback `B` → prints **B**
+
+### Visual Diagram
+
+```
+     ┌─────────────┐
+     │ Call Stack  │  ⇌ Runs sync, then async callbacks
+     └──────▲──────┘
+            │
+      Event Loop
+            │
+     ┌──────┴───────┐
+│              ││                │
+│ Microtask Queue │         │ (Promise.then, queueMicrotask)
+│    [C] FIFO      │
+│ Macrotask Queue  │         │  (setTimeout, events)
+│    [B] FIFO      │
+└──────────────────┴─────────┘
+```
+
+### Key Rules
+
+- **Synchronous code always runs first** (call stack must empty completely)
+- **Microtasks have priority** over macrotasks
+- After **each macrotask**, all pending microtasks are drained before the next macrotask
+- Microtasks can enqueue more microtasks (which will also run before any macrotask)
+
+***
+
 
 ## Additional JavaScript Coding Questions and Snippets
 
