@@ -194,6 +194,119 @@ Use try/catch, validate inputs, log errors, throw informative exceptions.
 ### 30. CAP theorem
 In distributed systems, can only guarantee 2 out of 3: Consistency, Availability, Partition tolerance during partitions.
 
+### 31. Event Loop: Call Stack, Microtask Queue, and Macrotask Queue
+
+#### Understanding JavaScript's Event Loop
+
+JavaScript uses **one call stack** plus **multiple queues** to handle synchronous and asynchronous code execution.
+
+#### Call Stack (Synchronous execution)
+
+- All normal code runs here in LIFO (Last In, First Out) order
+- Stack must be empty before any async callbacks run
+
+#### Microtask Queue (High priority)
+
+- Contains: `Promise.then/catch/finally`, `queueMicrotask`, `MutationObserver`
+- Processed completely after each synchronous task
+- FIFO (First In, First Out)
+
+#### Macrotask Queue (Lower priority)
+
+- Contains: `setTimeout`, `setInterval`, DOM events, I/O
+- Processed one at a time, after all microtasks are done
+- FIFO (First In, First Out)
+
+#### Execution Order Example
+
+```javascript
+console.log('A');
+setTimeout(() => console.log('B'), 0);
+Promise.resolve().then(() => console.log('C'));
+console.log('D');
+```
+
+**Output:**
+
+```
+A
+D
+C
+B
+```
+
+#### Why this order?
+
+1. **Synchronous phase (Call Stack):**
+   - `console.log('A')` executes → prints **A**
+   - `setTimeout` schedules callback `B` in **Macrotask Queue**
+   - `Promise.then` schedules callback `C` in **Microtask Queue**
+   - `console.log('D')` executes → prints **D**
+
+2. **Call stack is now empty, Event Loop checks queues:**
+   - **Microtask Queue** has priority → runs `C` → prints **C**
+   - Microtask Queue is empty
+
+3. **Event Loop picks from Macrotask Queue:**
+   - Runs callback `B` → prints **B**
+
+#### Mermaid Diagram - The Event Loop Flow
+
+```mermaid
+---
+config:
+  layout: dagre
+  look: classic
+  theme: light
+---
+graph TB
+    CallStack["Call Stack<br/>(LIFO)"]
+    EventLoop["Event Loop"]
+    MicroQueue["Microtask Queue<br/>[C] FIFO"]
+    MacroQueue["Macrotask Queue<br/>[B] FIFO"]
+
+    ProcessBlock1["Runs sync code"]
+    ProcessBlock2["1. Checks Microtasks<br/>(High Priority)"]
+    ProcessBlock3["2. Checks Macrotasks<br/>(Lower Priority)"]
+    ProcessBlock4["• Promise.then<br/>• queueMicrotask<br/>• MutationObserver"]
+    ProcessBlock5["• setTimeout<br/>• setInterval<br/>• DOM events<br/>I/O"]
+    
+    CallStack --> ProcessBlock1 --> EventLoop
+    EventLoop --> ProcessBlock2 --> MicroQueue
+    EventLoop --> ProcessBlock3 --> MacroQueue
+    
+    MicroQueue -.-> ProcessBlock4 -.-> CallStack
+    MacroQueue -.-> ProcessBlock5 -.-> CallStack
+    
+    style CallStack fill:#0366d6,stroke:#0366d6,stroke-width:2px
+    style MicroQueue fill:#d68400,stroke:#d68400,stroke-width:2px
+    style MacroQueue fill:#d6006e,stroke:#d6006e,stroke-width:2px
+    style EventLoop fill:green,stroke:green,stroke-width:2px
+    style ProcessBlock1 fill:light-blue,stroke:light-blue,stroke-width:2px
+    style ProcessBlock2 fill:light-blue,stroke:light-blue,stroke-width:2px
+    style ProcessBlock3 fill:light-blue,stroke:light-blue,stroke-width:2px
+    style ProcessBlock4 fill:light-blue,stroke:light-blue,stroke-width:2px
+    style ProcessBlock5 fill:light-blue,stroke:light-blue,stroke-width:2px
+```
+
+***
+
+**Summary Table (for interviews):**
+
+| Stack | Microtask Queue      | Macrotask Queue   |
+|-------|---------------------|------------------|
+| Sync code (for, fn, let…) | Promise.then, queueMicrotask | setTimeout, setInterval, DOM events |
+| LIFO   | FIFO, high priority | FIFO, low priority   |
+
+***
+
+**Interview gotcha:**  
+Microtasks always execute before the next macrotask—even if a timer is set to 0ms. Always expect all microtasks to flush first!
+
+***
+
+**This structure ensures any interviewer or candidate can quickly internalize both the core concept and mental model, plus map the diagram to the written explanation.**
+
 ***
 
 ## Additional JavaScript Coding Questions and Snippets
@@ -394,3 +507,4 @@ p2.then(x => console.log('Should skip:', x))
 ***
 
 **Good luck with your JavaScript interview! Copy and use this as your prepping cheat-sheet.**
+
