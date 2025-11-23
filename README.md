@@ -255,6 +255,12 @@ B
 ### Visual Diagram
 
 ```mermaid
+---
+config:
+  layout: dagre
+  look: classic
+  theme: default
+---
 graph TB
     CallStack["Call Stack<br/>(LIFO)"]
     EventLoop["Event Loop"]
