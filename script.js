@@ -41,8 +41,8 @@ marked.use({
                                     if ((infostring || '').trim() === 'mermaid') {
                                                         return `<div class="mermaid">${code}</div>`;
                                                     }
+                                        return false; // Use default renderer for non-mermaid blocks
                                 }
-                            return false; // Use default renderer for non-mermaid blocks
                 }
             });
 
