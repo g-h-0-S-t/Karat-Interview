@@ -109,6 +109,46 @@ function enhanceMermaid() {
    SEARCH + HIGHLIGHT
 ========================================================= */
 
+// Clear all highlighted text
+function clearHighlights(el) {
+  el.querySelectorAll('mark.search-hit').forEach(mark => {
+    const parent = mark.parentNode;
+    parent.replaceChild(document.createTextNode(mark.textContent), mark);
+  });
+}
+
+// Highlight search term in element
+function highlightTerm(el, term) {
+  if (!term) return;
+  const regex = new RegExp(`(${term})`, 'gi');
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
+  const nodesToReplace = [];
+  
+  while (walker.nextNode()) {
+    const node = walker.currentNode;
+    if (node.parentElement.tagName !== 'MARK' && node.nodeValue.match(regex)) {
+      nodesToReplace.push(node);
+    }
+  }
+  
+  nodesToReplace.forEach(node => {
+    const fragment = document.createDocumentFragment();
+    const parts = node.nodeValue.split(regex);
+    parts.forEach((part, i) => {
+      if (i % 2 === 0) {
+        fragment.appendChild(document.createTextNode(part));
+      } else {
+        const mark = document.createElement('mark');
+        mark.className = 'search-hit';
+        mark.textContent = part;
+        fragment.appendChild(mark);
+      }
+    });
+    node.parentNode.replaceChild(fragment, node);
+  });
+}
+
+
 // State for search cycling
 let currentMatchIndex = 0;
 let matchElements = [];
