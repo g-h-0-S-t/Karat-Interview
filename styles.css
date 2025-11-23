@@ -330,19 +330,22 @@ html {
 }
 
 /* Mermaid diagram styles */
-.mermaid, pre.mermaid {
+.mermaid {
     display: flex;
     justify-content: center;
     margin: 2rem auto;
     max-width: 100%;
 }
 
-/* Fix text color in Mermaid diagrams for dark theme */
-.mermaid text, pre.mermaid text {
+.mermaid text {
     fill: var(--text-primary) !important;
 }
 
-/* Override Mermaid's default text colors */
-.mermaid .nodeLabel, .mermaid .edgeLabel {
+/* Mermaid text fixes */
+.mermaid svg text,
+.mermaid .label foreignObject span,
+.mermaid .nodeLabel,
+.mermaid .edgeLabel {
+    fill: var(--text-primary) !important;
     color: var(--text-primary) !important;
 }
