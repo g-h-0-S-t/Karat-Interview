@@ -56,8 +56,6 @@ async function loadReadme() {
                                                                                                 console.log('Mermaid block detected!', infostring);
                                                                                                         return `<div class="mermaid">${code}</div>`;
                                                                                                     }
-                                                                            // Return false for default rendering
-                                                                            return false;
                                                                         }
                                                 }
                                             });
