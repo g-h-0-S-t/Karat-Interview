@@ -257,7 +257,7 @@ B
 config:
   layout: dagre
   look: classic
-  theme: light
+  theme: neutral
 ---
 graph TB
     CallStack["Call Stack<br/>(LIFO)"]
