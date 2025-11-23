@@ -66,9 +66,8 @@ async function loadReadme() {
 
                 // Initialize Mermaid to render diagrams
                 if (window.mermaid) {
-                                mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+            mermaid.run({querySelector: '.mermaid'});
                             }
-        
         // Apply syntax highlighting
         document.querySelectorAll('pre code').forEach((block) => {
                         // Skip mermaid diagrams - they should be rendered by mermaid.js, not highlighted
